@@ -1,0 +1,128 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Preparing AWS resources form mansplaining.
+Parameters: 
+  UniqueID: 
+    Type: String
+    Default: yourinitials
+    Description: Enter your initials in lower case as a unique identifier for components created 
+    AllowedPattern: "^([a-z]|(d(?!d{0,2}.d{1,3}.d{1,3}.d{1,3})))([a-zd]|(.(?!(.|-)))|(-(?!.))){1,61}[a-zd.]$"
+
+Resources:
+  MansplainingS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties: 
+      AccessControl: BucketOwnerFullControl
+      VersioningConfiguration: 
+        Status: Enabled
+      BucketName:
+        Fn::Join:
+          - ""
+          - - "mansplaining-"
+            - !Ref UniqueID
+            - "-"
+            - !Select
+             - 0
+             - !Split
+              - "-"
+              - !Select
+                - 2
+                - !Split
+                  - "/"
+                  - !Ref "AWS::StackId"
+
+
+  TranscribeLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      Runtime: python3.6
+      Handler: index.lambda_handler
+      Role: !GetAtt [TranscribeLambdaExecutionRole, Arn]
+      Timeout: 900
+      Code:
+        ZipFile: !Join
+          - |+
+
+          - - import json
+            - import boto3
+            - import time
+
+            - 'def lambda_handler(event,context):'
+            - '    print("event is: %", event)'
+            - '    record = event["Records"][0]'
+            - '    print("Record is ", record)'
+            - '    region = record["awsRegion"]'
+            - '    print("region is ", region)'
+            - '    bucket = record["s3"]["bucket"]["name"]'
+            - '    print("bucket is ", bucket)'
+            - '    key = record["s3"]["object"]["key"]'
+            - '    print("key is ", key)'
+
+            - '    job_uri = "https://" + bucket + ".s3-" + region + ".amazonaws.com/" + key'
+            - '    print("job_uri ", job_uri)'
+
+            - '    ##Start the transcription job'
+            - '    timestamp = time.strftime("-%Y-%m-%d-%H-%M-%S", time.gmtime())'
+
+            - '    job_name = "transcribe_meeting_recording_" +  timestamp'
+
+            - '    transcribe.start_transcription_job('
+            - '                    TranscriptionJobName=job_name, '
+            - '                    Media={"MediaFileUri": job_uri},'
+            - '                    MediaFormat="mp4",'
+            - '                    LanguageCode="en-US",'
+            - '                    OutputBucketName=bucket,'
+            - '                    Settings= {'
+            - '                        "ShowSpeakerLabels": True,'
+            - '                        "MaxSpeakerLabels":10'
+            - '                    }'
+            - '    )'
+
+            - '    while True:'
+            - '        status = transcribe.get_transcription_job(TranscriptionJobName=job_name)'
+            - '        if status["TranscriptionJob"]["TranscriptionJobStatus"] in ["COMPLETED", "FAILED"]:'
+            - '            break'
+            - '        print("Transcribe Job Running...")'
+            - '        time.sleep(5)'
+            
+            - '    print(status)'
+            - '    print("######")'
+            - '    print(status["TranscriptionJob"]["Transcript"]["TranscriptFileUri"])'
+
+            - '    return "Completed transcribing the meeting recording" '
+
+  TranscribeLambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonTranscribeFullAccess
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
+        - arn:aws:iam::aws:policy/CloudWatchFullAccess
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      RoleName:
+        Fn::Join:
+          - ""
+          - - "Mansplaining-Transcribe-Lambda-ServiceRole-"
+            - !Ref UniqueID
+
+  LambdaInvokePermission:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: !GetAtt TranscribeLambda.Arn
+      Action: 'lambda:InvokeFunction'
+      Principal: s3.amazonaws.com
+      SourceAccount: !Ref 'AWS::AccountId'
+      SourceArn: !Sub 'arn:aws:s3:::${MansplainingS3Bucket}'
+
+Outputs:
+      MansplainingS3Bucket:
+        Description: Mansplaining bucket name
+        Value: !Ref MansplainingS3Bucket
+
+
