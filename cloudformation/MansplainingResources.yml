@@ -266,9 +266,13 @@ Resources:
             - '        "Key": transcoder_output_key'
             - '      }'
             - '      output_key = "meeting-WAV-Parts/"+transcoder_output_key'
-            - '      s3_resource.meta.client.copy(copy_source,Bucket=bucket,Key=output_key)'
-            - '      # Delete the original transcribed meeting'
-            - '      s3_resource.Object(bucket, transcoder_output_key).delete()'
+            - '      try :'
+            - '         s3_resource.meta.client.copy(copy_source,Bucket=bucket,Key=output_key)'
+            - '         # Delete the original transcribed meeting'
+            - '         s3_resource.Object(bucket, transcoder_output_key).delete()'
+            - '      except e:'
+            - '         print("Error copying WAV file")'
+            - '         continue'
 
             - '  return "Completed transcribing the meeting recording" '
 
