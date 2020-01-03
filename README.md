@@ -37,7 +37,15 @@
 
 2.Launch a cloudformation stack using the file "MansplainingResources.yml"
 
-3.Verify the resources
+2.1.Verify the resources created : S3 bucket
+
+2.3 In the S3 bucket, create a folder "lambda-code" and upload two zip files from this repo.
+
+2.3.1 lambda-code/AnalyzeMeetingLambda.zip and lambda-code/TranscribeLambda.zip
+
+3.Launch a cloudformation stack using the file "Mansplaining_LambdaFunctions.yml"
+
+3.1.Verify the two lambda functions created.
 
 4.Configure Transcribe Lambda trigger through console (Note : this portiona can also be automated based on instructions at https://aws.amazon.com/premiumsupport/knowledge-center/cloudformation-s3-notification-lambda/ )
 

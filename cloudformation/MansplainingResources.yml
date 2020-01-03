@@ -29,6 +29,18 @@ Resources:
                 - !Split
                   - "/"
                   - !Ref "AWS::StackId"
+  MansplainingDynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: "meeting-id"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "meeting-id"
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
 
 Outputs:
       MansplainingS3Bucket:
