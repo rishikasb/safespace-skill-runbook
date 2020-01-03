@@ -154,6 +154,8 @@ Resources:
             - import time
             - s3_resource = boto3.resource('s3')
             - elastictranscoder_client = boto3.client('elastictranscoder')
+            - s3_client = boto3.client('s3')
+            - sagemaker_client = boto3.client('sagemaker-runtime')
 
             - 'def lambda_handler(event,context):'
             - '  #Get the filename(key) that caused the event.'
@@ -253,26 +255,55 @@ Resources:
             - '      if job_status in ["Complete", "Failed"]:'
             - '        break;'
 
-            - '  #Now move the WAV parts to their own directory.'
-            - '  for create_job_response in create_job_responses:'
-            - '    transcoder_ouputs = create_job_response["Job"]["Outputs"]'
-            - '    print("transcoder outputs ", transcoder_ouputs)'
-            - '    for transcoder_output in transcoder_ouputs:'
-            - '      transcoder_output_key = transcoder_output["Key"]'
-            - '      print("transcoder_output_key ", transcoder_output_key)'
-            - '      #Copy the transcribed meeting to Output folder'
-            - '      copy_source = {'
-            - '        "Bucket": bucket,'
-            - '        "Key": transcoder_output_key'
-            - '      }'
-            - '      output_key = "meeting-WAV-Parts/"+transcoder_output_key'
-            - '      try :'
-            - '         s3_resource.meta.client.copy(copy_source,Bucket=bucket,Key=output_key)'
-            - '         # Delete the original transcribed meeting'
-            - '         s3_resource.Object(bucket, transcoder_output_key).delete()'
-            - '      except e:'
-            - '         print("Error copying WAV file")'
-            - '         continue'
+            - '  #Now convert WAV to byte64 encoded and make predictions '
+            - '  male_count = 0 '
+            - '  female_count = 0  '
+
+            - '  for create_job_response in create_job_responses: '
+            - '    transcoder_ouputs = create_job_response["Job"]["Outputs"] '
+            - '    print("transcoder outputs ", transcoder_ouputs) '
+            - '    for transcoder_output in transcoder_ouputs: '
+            - '      transcoder_output_key = transcoder_output["Key"] '
+
+            - '      print("transcoder_output_key ", transcoder_output_key) '
+
+            - '      s3_client.download_file(bucket, transcoder_output_key, "/tmp/"+ transcoder_output_key) '
+
+            - '      with open("/tmp/"+ transcoder_output_key, "rb") as wav_file: '
+            - '        file_contents = wav_file.read() '
+            - '        wav_file.close() '
+            - '        encoded_file_contents=base64.b64encode(file_contents).decode("utf-8") '
+            - '        print("encoded_file_contents ", encoded_file_contents) '
+
+            - '      payload = "{" + "\"instances\": [{" + "\"audio\": {" + "\"b64\": \"" + encoded_file_contents + "\"}}]}" '
+
+            - '      response = sagemaker_client.invoke_endpoint( '
+            - '          EndpointName="Mansplaining-Gender-Classifier-EP", '
+            - '          Body=payload.encode("utf-8"), '
+            - '          ContentType="application/json" '
+            - '      ) '
+
+            - '      prediction_for_wav_part = response["Body"].read().decode("utf-8") '
+            - '      print("prediction for part wav file is ", prediction_for_wav_part) '
+
+            - '      prediction_for_wav_part_json = json.loads(prediction_for_wav_part) '
+
+            - '      predicted_label = prediction_for_wav_part_json["predictions"][0]["label"] '
+
+            - '      print("predicted_label ", predicted_label) '
+
+            - '      if "female" in predicted_label: '
+            - '        female_count += 1 '
+            - '      else: '
+            - '        male_count += 1 '
+
+            - '      #predictions_for_wav_parts.append(prediction_for_wav_part)
+
+            - '  #Combine the predictions of individual wav parts '
+            - '  percent_male = 100 * male_count / (male_count + female_count) '
+            - '  percent_female = 100 * female_count / (male_count + female_count) '
+
+            - '  print ("Percentage of time men were speaking was {}%, while for women it was {}%.".format(percent_male, percent_female)) '
 
             - '  return "Completed transcribing the meeting recording" '
 
