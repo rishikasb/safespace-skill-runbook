@@ -2,11 +2,14 @@ import json
 import boto3
 import time
 import base64
+import os
 
 s3_resource = boto3.resource('s3')
 elastictranscoder_client = boto3.client('elastictranscoder')
 s3_client = boto3.client('s3')
 sagemaker_client = boto3.client('sagemaker-runtime')
+
+dynamodb_client = boto3.client('dynamodb')
 
 def lambda_handler(event, context):
     # Get the filename(key) that caused the event.
@@ -153,6 +156,22 @@ def lambda_handler(event, context):
     percent_male = 100 * male_count / (male_count + female_count)
     percent_female = 100 * female_count / (male_count + female_count)
 
-    print ("Percentage of time men were speaking was {}%, while for women it was {}%.".format(percent_male, percent_female))
+    meeting_analysis = "Percentage of time men were speaking was {}%, while for women it was {}%.".format(percent_male, percent_female)
+
+    print(meeting_analysis)
+
+    table = os.environ['MansplainingDynamoDB']
+
+    dynamodb_client.put_item(
+        TableName=table,
+        Item={
+            'meeting-id': {'S': key},
+            'analysis': {'S': meeting_analysis}
+        }
+    )
+
+    #dynamodb.put_item(TableName='fruitSalad', Item={'fruitName': {'S': 'Banana'}, 'key2': {'N': 'value2'}})
+
+    #print ("Percentage of time men were speaking was {}%, while for women it was {}%.".format(percent_male, percent_female))
 
     return "Completed transcribing the meeting recording"

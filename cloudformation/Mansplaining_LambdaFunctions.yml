@@ -61,6 +61,8 @@ Resources:
       Environment:
         Variables:
           CodePipelineRole: "arn:aws:iam::923611210851:role/service-role/AmazonSageMaker-ExecutionRole-20191229T181432"
+          MansplainingDynamoDB:
+            Fn::ImportValue: !Sub MansplainingDynamoDB
       Code:
         S3Bucket:
             Fn::ImportValue: MansplainingBucket
@@ -82,6 +84,7 @@ Resources:
           - arn:aws:iam::aws:policy/AmazonS3FullAccess
           - arn:aws:iam::aws:policy/CloudWatchFullAccess
           - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+          - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
       RoleName:
         Fn::Join:
           - ""

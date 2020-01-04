@@ -55,3 +55,9 @@ Outputs:
         Export:
           Name: MansplainingBucketARN
 
+      MansplainingDynamoDB:
+        Description: Mansplaining DynamoDB table
+        Value: !Ref MansplainingDynamoDBTable
+        Export:
+          Name: MansplainingDynamoDB
+
