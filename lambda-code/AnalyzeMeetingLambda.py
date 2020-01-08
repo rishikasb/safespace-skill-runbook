@@ -71,7 +71,8 @@ def lambda_handler(event, context):
        Name="mansplaining_pipeline",
        InputBucket=bucket,
        OutputBucket=bucket,
-       Role="arn:aws:iam::923611210851:role/service-role/AmazonSageMaker-ExecutionRole-20191229T181432")
+       Role=os.environ['ElasticTranscoderRole'])
+       #Role="arn:aws:iam::923611210851:role/service-role/AmazonSageMaker-ExecutionRole-20191229T181432")
 
     pipeline_id = pipeline["Pipeline"]["Id"]
     print(" Pipeline ID is ", pipeline_id)
@@ -131,7 +132,8 @@ def lambda_handler(event, context):
        payload = "{" + "\"instances\": [{" + "\"audio\": {" + "\"b64\": \"" + encoded_file_contents + "\"}}]}"
 
        response = sagemaker_client.invoke_endpoint(
-           EndpointName="Mansplaining-Gender-Classifier-EP",
+           EndpointName=os.environ['GenderClassifierEndpoint'],
+           #EndpointName="Mansplaining-Gender-Classifier-EP",
            Body=payload.encode("utf-8"),
            ContentType="application/json"
        )
@@ -169,9 +171,5 @@ def lambda_handler(event, context):
             'analysis': {'S': meeting_analysis}
         }
     )
-
-    #dynamodb.put_item(TableName='fruitSalad', Item={'fruitName': {'S': 'Banana'}, 'key2': {'N': 'value2'}})
-
-    #print ("Percentage of time men were speaking was {}%, while for women it was {}%.".format(percent_male, percent_female))
 
     return "Completed transcribing the meeting recording"

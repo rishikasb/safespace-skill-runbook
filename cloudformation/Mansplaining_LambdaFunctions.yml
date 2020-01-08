@@ -60,9 +60,10 @@ Resources:
       Timeout: 900
       Environment:
         Variables:
-          CodePipelineRole: "arn:aws:iam::923611210851:role/service-role/AmazonSageMaker-ExecutionRole-20191229T181432"
+          ElasticTranscoderRole: !GetAtt [ElasticTranscoderExecutionRole, Arn]
           MansplainingDynamoDB:
             Fn::ImportValue: !Sub MansplainingDynamoDB
+          GenderClassifierEndpoint: "Mansplaining-Gender-Classifier-EP"
       Code:
         S3Bucket:
             Fn::ImportValue: MansplainingBucket
@@ -85,10 +86,31 @@ Resources:
           - arn:aws:iam::aws:policy/CloudWatchFullAccess
           - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
           - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+          - arn:aws:iam::aws:policy/IAMFullAccess
       RoleName:
         Fn::Join:
           - ""
           - - "Mansplaining-AnalyzeMeeting-Lambda-ServiceRole-"
+            - !Ref UniqueID
+
+  ElasticTranscoderExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          Effect: Allow
+          Principal:
+            Service:  elastictranscoder.amazonaws.com
+          Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonElasticTranscoder_FullAccess
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
+        - arn:aws:iam::aws:policy/CloudWatchFullAccess
+      RoleName:
+        Fn::Join:
+          - ""
+          - - "Mansplaining-ElasticTranscoder-ServiceRole-"
             - !Ref UniqueID
 
   AnalyzeMeetingLambdaInvokePermission:
