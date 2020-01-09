@@ -107,6 +107,7 @@ Resources:
         - arn:aws:iam::aws:policy/AmazonElasticTranscoder_FullAccess
         - arn:aws:iam::aws:policy/AmazonS3FullAccess
         - arn:aws:iam::aws:policy/CloudWatchFullAccess
+        - arn:aws:iam::aws:policy/IAMFullAccess
       RoleName:
         Fn::Join:
           - ""

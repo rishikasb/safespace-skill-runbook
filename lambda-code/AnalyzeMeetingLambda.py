@@ -33,8 +33,8 @@ def lambda_handler(event, context):
        start_time = float(segment["start_time"])
        end_time = float(segment["end_time"])
 
-       # get a 1/2 second snippet after each speaker starts
-       delta = .5
+       # get a 1 second snippet after each speaker starts
+       delta = 1
 
        times.append((start_time, delta))
 
@@ -67,12 +67,13 @@ def lambda_handler(event, context):
     print("Number of outputs ", len(outputs))
     print(outputs)
 
+    print("ElasticTranscoderRole ", os.environ['ElasticTranscoderRole'])
+
     pipeline = elastictranscoder_client.create_pipeline(
        Name="mansplaining_pipeline",
        InputBucket=bucket,
        OutputBucket=bucket,
        Role=os.environ['ElasticTranscoderRole'])
-       #Role="arn:aws:iam::923611210851:role/service-role/AmazonSageMaker-ExecutionRole-20191229T181432")
 
     pipeline_id = pipeline["Pipeline"]["Id"]
     print(" Pipeline ID is ", pipeline_id)
@@ -81,11 +82,11 @@ def lambda_handler(event, context):
     transcoder_jobs = []
 
     #need to loop through batches of 30  (TODO : make this configurable)'
-    iterator = round(len(inputs)/5)
+    iterator = len(inputs)
     for i in range(iterator):
-     print(i)
-     lb = i * 5
-     up = lb + 5
+     #print(i)
+     lb = i
+     up = lb + 1
      if up > len(inputs):
        up = len(inputs)
      create_job_response = elastictranscoder_client.create_job(
@@ -152,13 +153,11 @@ def lambda_handler(event, context):
        else:
          male_count += 1
 
-       #predictions_for_wav_parts.append(prediction_for_wav_part)
-
     #Combine the predictions of individual wav parts
     percent_male = 100 * male_count / (male_count + female_count)
     percent_female = 100 * female_count / (male_count + female_count)
 
-    meeting_analysis = "Percentage of time men were speaking was {}%, while for women it was {}%.".format(percent_male, percent_female)
+    meeting_analysis = "Percentage of time men were speaking was {:.2f}%, while for women it was {:.2f}%.".format(percent_male, percent_female)
 
     print(meeting_analysis)
 
