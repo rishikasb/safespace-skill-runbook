@@ -42,6 +42,7 @@ def lambda_handler(event, context):
     print(times)
 
     ##Form the inputs to elastic transcoder.
+    ##TODO : Remove hardcoding for key.
     inputs = []
     for start_time, duration in times:
        json_obj = {
@@ -157,15 +158,17 @@ def lambda_handler(event, context):
     percent_male = 100 * male_count / (male_count + female_count)
     percent_female = 100 * female_count / (male_count + female_count)
 
-    meeting_analysis = "Percentage of time men were speaking was {:.2f}%, while for women it was {:.2f}%.".format(percent_male, percent_female)
+    meeting_analysis = "Men were speaking {:.2f}% of the time, while women were speaking {:.2f}% of the time.".format(percent_male, percent_female)
 
     print(meeting_analysis)
 
     table = os.environ['MansplainingDynamoDB']
-
+    ##TODO : Remove hardcoding for fact-number.
     dynamodb_client.put_item(
         TableName=table,
         Item={
+            'fact-type': {'S': 'MansplainingFact'},
+            'fact-number': {'S': '1'},
             'meeting-id': {'S': key},
             'analysis': {'S': meeting_analysis}
         }

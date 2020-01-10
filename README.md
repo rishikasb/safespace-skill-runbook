@@ -83,12 +83,22 @@
 
 5.8 Click Add
 
-6.Upload meeting recordings to mansplaining bucket
+6. Configure AlexaSkillLambda trigger through console (Note : this portiona can also be automated based on instructions at https://aws.amazon.com/premiumsupport/knowledge-center/cloudformation-s3-notification-lambda/ )
 
-6.1 If not already created, create a folder "meeting-recordings" in the bucket
+6.1 Click on the lambda function name
 
-6.2 Upload the meeting recording to the "meeting-recordings" folder.
+6.2 Add trigger
 
-6.3 This will automatically trigger "TranscribeLambda" which transcribes the recording and stores in the folder "meeting-transcriptions"
+6.3 Select a trigger.  Choose AlexaSkill
 
-6.4 Once the meeting transcription is created, "AnalyzeMeetingLambda" is triggered.
+6.4 Enter the Alexa skill id collected from the Alexa developer portal.
+
+7.Upload meeting recordings to mansplaining bucket
+
+7.1 If not already created, create a folder "meeting-recordings" in the bucket
+
+7.2 Upload the meeting recording to the "meeting-recordings" folder.
+
+7.3 This will automatically trigger "TranscribeLambda" which transcribes the recording and stores in the folder "meeting-transcriptions"
+
+7.4 Once the meeting transcription is created, "AnalyzeMeetingLambda" is triggered.

@@ -50,7 +50,6 @@ Resources:
       SourceArn:
         Fn::ImportValue: !Sub MansplainingBucketARN
 
-
   AnalyzeMeetingLambda:
     Type: AWS::Lambda::Function
     Properties:
@@ -68,6 +67,42 @@ Resources:
         S3Bucket:
             Fn::ImportValue: MansplainingBucket
         S3Key: "lambda-code/AnalyzeMeetingLambda.zip"
+
+  AlexaSkillLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      Runtime: python3.6
+      Handler: AlexaSkillLambda.lambda_handler
+      Role: !GetAtt [AlexaSkilLambdaExecutionRole, Arn]
+      Timeout: 900
+      Environment:
+        Variables:
+          MansplainingDynamoDB:
+            Fn::ImportValue: !Sub MansplainingDynamoDB
+      Code:
+        S3Bucket:
+          Fn::ImportValue: MansplainingBucket
+        S3Key: "lambda-code/AlexaSkillLambda.zip"
+
+  AlexaSkilLambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/CloudWatchFullAccess
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+      RoleName:
+        Fn::Join:
+          - ""
+          - - "Mansplaining-MansplainingSkill-Lambda-ServiceRole-"
+            - !Ref UniqueID
 
   AnalyzeMeetingLambdaExecutionRole:
     Type: AWS::IAM::Role
