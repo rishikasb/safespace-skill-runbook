@@ -3,6 +3,7 @@ import boto3
 import time
 import base64
 import os
+from boto3.dynamodb.conditions import Key, Attr
 
 s3_resource = boto3.resource('s3')
 elastictranscoder_client = boto3.client('elastictranscoder')
@@ -10,6 +11,7 @@ s3_client = boto3.client('s3')
 sagemaker_client = boto3.client('sagemaker-runtime')
 
 dynamodb_client = boto3.client('dynamodb')
+dynamodb_resource = boto3.resource('dynamodb')
 
 def lambda_handler(event, context):
     # Get the filename(key) that caused the event.
@@ -19,6 +21,10 @@ def lambda_handler(event, context):
     key = record["s3"]["object"]["key"]
     print("key is ", key)
 
+    # key is of the form 'meeting-transcriptions/cateogry/filename.mp4'.
+    # Use meeting category as prefix for the output
+    meeting_category = key.split("/")[1]
+
     #Get the content of the file
     obj = s3_resource.Object(bucket, key)
     body = obj.get()["Body"].read()
@@ -26,6 +32,11 @@ def lambda_handler(event, context):
 
     #Get the transcription results
     transcription_results = json_content["results"]
+
+    # Get the transcription job name
+    transcription_job_name = json_content["jobName"]
+    original_meeting_recording = transcription_job_name.split("-")[0]
+    print("original_meeting_recording : ", original_meeting_recording)
 
     #Get the speaker times from the transcript
     times = []
@@ -42,11 +53,10 @@ def lambda_handler(event, context):
     print(times)
 
     ##Form the inputs to elastic transcoder.
-    ##TODO : Remove hardcoding for key.
     inputs = []
     for start_time, duration in times:
        json_obj = {
-           "Key": "meeting-recordings/Border Security Part1.m4a",
+           "Key": "meeting-recordings/" + meeting_category + "/" + original_meeting_recording,
            "TimeSpan": {
                "StartTime": str(start_time),
                "Duration": str(duration)
@@ -135,7 +145,6 @@ def lambda_handler(event, context):
 
        response = sagemaker_client.invoke_endpoint(
            EndpointName=os.environ['GenderClassifierEndpoint'],
-           #EndpointName="Mansplaining-Gender-Classifier-EP",
            Body=payload.encode("utf-8"),
            ContentType="application/json"
        )
@@ -163,13 +172,27 @@ def lambda_handler(event, context):
     print(meeting_analysis)
 
     table = os.environ['MansplainingDynamoDB']
+
+    # Get the count of mansplaining facts
+    dynamodb_table = dynamodb_resource.Table(table)
+    response = dynamodb_table.query(
+        KeyConditionExpression=Key('fact-type').eq('MansplainingFact')
+    )
+    items = response['Items']
+
+    count = 0
+
+    count = len(items)
+    print("Number of mansplaining facts ", count)
+
     ##TODO : Remove hardcoding for fact-number.
     dynamodb_client.put_item(
         TableName=table,
         Item={
             'fact-type': {'S': 'MansplainingFact'},
-            'fact-number': {'S': '1'},
+            'fact-number': {'S': str(count+1)},
             'meeting-id': {'S': key},
+            'meeting-category': {'S': meeting_category},
             'analysis': {'S': meeting_analysis}
         }
     )

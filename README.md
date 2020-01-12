@@ -97,7 +97,7 @@
 
 7.1 If not already created, create a folder "meeting-recordings" in the bucket
 
-7.2 Upload the meeting recording to the "meeting-recordings" folder.
+7.2 Upload the meeting recording to the "meeting-recordings" folder.  (Note : Make sure that there are no spaces in the filename)
 
 7.3 This will automatically trigger "TranscribeLambda" which transcribes the recording and stores in the folder "meeting-transcriptions"
 

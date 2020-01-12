@@ -22,7 +22,11 @@ def lambda_handler(event,context):
     ##Start the transcription job
     timestamp = time.strftime("-%Y-%m-%d-%H-%M-%S", time.gmtime())
 
-    job_name = "transcribe_meeting_recording" +  timestamp
+    # key is of the form 'meeting-recordings/cateogry/filename.mp4'.
+    # Use the filename.mp4 in the job_name
+    # Use meeting category as prefix for the output
+    meeting_category = key.split("/")[1]
+    job_name = key.split("/")[2] + "-" + timestamp
 
     transcribe.start_transcription_job(
       TranscriptionJobName=job_name,
@@ -57,7 +61,8 @@ def lambda_handler(event,context):
         "Key": transcribed_meeting_key
     }
 
-    s3_resource.meta.client.copy(copy_source,Bucket=bucket,Key="meeting-transcriptions/"+transcribed_meeting_key)
+    s3_resource.meta.client.copy(copy_source, Bucket=bucket,
+                                 Key="meeting-transcriptions/" + meeting_category + "/" + transcribed_meeting_key)
 
     # Delete the original transcribed meeting
     s3_resource.Object(bucket, transcribed_meeting_key).delete()

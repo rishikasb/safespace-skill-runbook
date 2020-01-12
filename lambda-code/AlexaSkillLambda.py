@@ -2,6 +2,8 @@ from __future__ import print_function
 import boto3
 import os
 from boto3.dynamodb.conditions import Key, Attr
+import random
+from random import randint 
 
 
 # --------------- Helpers that build all of the responses ----------------------
@@ -74,11 +76,21 @@ def get_mansplaining_fact(table, intent, session):
     reprompt_text = "Sorry, I didn't understand. Please ask again"
     try:
         print("table is ", table)
-        # response = table.get_item(Key={'fact_type':'Overall Facts'})
-        ##Todo : Need to use the correct fact type and remove hardcoding for fact-number.
-        # response = table.get_item(Key={'fact_type':'mansplain-out-new.json'})
+
+        # Get the count of mansplaining facts
+        response = table.query(
+            KeyConditionExpression=Key('fact-type').eq('MansplainingFact')
+        )
+        items = response['Items']
+
+        count = 0
+        count = len(items);
+        print("Number of mansplaining facts ", count)
+
+        # Select a random fact
+        random_fact_number = randint(1, count)
         response = table.get_item(
-            Key={'fact-type': 'MansplainingFact', 'fact-number':'2'}
+            Key={'fact-type': 'MansplainingFact', 'fact-number': str(random_fact_number)}
         )
 
         print("response is ", response)
@@ -88,10 +100,10 @@ def get_mansplaining_fact(table, intent, session):
         speech_output = "I'm sorry, I did not understand the request. Please ask again."
         should_end_session = False
 
-        # response is {'Item': {'fact': 'Men participated more in the meetings', 'fact_id': '1'}, 'ResponseMetadata': {'RequestId': '2FIKQQ9K26T78BK57C10KS1DTFVV4KQNSO5AEMVJF66Q9ASUAAJG', 'HTTPStatusCode': 200, 'HTTPHeaders': {'server': 'Server', 'date': 'Mon, 1
     fact = response['Item']['analysis']
+    category = response['Item']['meeting-category']
     if fact:
-        speech_output = "In the meeting analyzed, " + fact
+        speech_output = "Analysis of a meeting in the " + category + " category reveals that " + fact
         should_end_session = False
 
     return build_response(session_attributes, build_speechlet_response(
