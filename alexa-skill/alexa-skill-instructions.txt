@@ -1,0 +1,28 @@
+https://developer.amazon.com/alexa/console/ask
+
+Click ‘Create Skill”
+
+Skill name - Mansplaining
+Default language - English (US)
+Choose a model to add to your skill
+  — Click “Custom”
+Choose a method to host your skill’s backend resources
+  — Click “Alexa-Hosted(Python)”
+Click “Create Skill”
+
+On Next Page
+
+Choose a template to add to your skill
+— Click “Hello World Skill”
+Click “Continue with template”
+
+
+On Next Page
+
+Select JSON Editor
+Drag and drop the mansplaining.json
+Click “Save Model”
+
+Click “BuildModel”
+
+To Test, Click “Test"
