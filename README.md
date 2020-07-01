@@ -37,13 +37,21 @@
 
 2.Launch a cloudformation stack using the file "MansplainingResources.yml"
 
-2.1.Verify the resources created : S3 bucket
+2.1 Access CloudFormation through the AWS Console
 
-2.3 In the S3 bucket, create a folder "lambda-code" and upload two zip files from this repo.
+2.1.1 Select "create stack" and choose the "with new resources" option
 
-2.3.1 lambda-code/AnalyzeMeetingLambda.zip and lambda-code/TranscribeLambda.zip
+2.1.2 Default option for "Prerequisite - prepare template" should be "template is ready" - do not change this. Select "upload a template file" under the "Specify template" option and now upload the "MansplainingResources.yml" here.
 
-3.Launch a cloudformation stack using the file "Mansplaining_LambdaFunctions.yml"
+2.1.3 Click "Next", no other options need to be changed, except use your own initials for the uniqueID (note: this must be at least 3 characters long).
+
+2.2 Verify the resources created : S3 bucket
+
+2.3 In the S3 bucket, create a folder "lambda-code" and upload three zip files from this repo.
+
+2.3.1 lambda-code/AnalyzeMeetingLambda.zip, lambda-code/TranscribeLambda.zip, and lambda-code/AlexaSkillLambda.zip
+
+3. Launch a cloudformation stack using the file "Mansplaining_LambdaFunctions.yml". Follow the same steps as above in 2.1.1-2.1.3. 
 
 3.1.Verify the two lambda functions created.
 
@@ -51,7 +59,7 @@
 
 4.1 Click on the lambda function name
 
-4.2 Add trigger
+4.2 Add trigger (note: You can't create triggers for the $LATEST version, you must create them for a numbered version, as explained here: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/lambda-edge-add-triggers-lam-console.html)
 
 4.3 Select a trigger.  Choose S3
 
@@ -69,7 +77,7 @@
 
 5.1 Click on the lambda function name
 
-5.2 Add trigger
+5.2 Add trigger (note: You can't create triggers for the $LATEST version, you must create them for a numbered version, as explained here: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/lambda-edge-add-triggers-lam-console.html)
 
 5.3 Select a trigger.  Choose S3
 
@@ -87,7 +95,7 @@
 
 6.1 Click on the lambda function name
 
-6.2 Add trigger
+6.2 Add trigger (note: You can't create triggers for the $LATEST version, you must create them for a numbered version, as explained here: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/lambda-edge-add-triggers-lam-console.html)
 
 6.3 Select a trigger.  Choose AlexaSkill
 
