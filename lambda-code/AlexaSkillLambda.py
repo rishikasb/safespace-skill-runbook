@@ -3,7 +3,7 @@ import boto3
 import os
 from boto3.dynamodb.conditions import Key, Attr
 import random
-from random import randint 
+from random import randint
 
 
 # --------------- Helpers that build all of the responses ----------------------
