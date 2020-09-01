@@ -1,7 +1,19 @@
-# mansplaining-skill
+# SafeSpace Alexa Skill
 
+General End-to-End Workflow:
+
+- Deploy Chime meeting recording application:
+    - Services used: Cloud9, ECR & ECR (Docker image), networking resources (VPC, security groups, subnets), auto-scaling group for ECS cluster, IAM roles
+    - General overview: 
+        - create repository in ECR, build and upload docker image into ECR
+        - deploy.js script (obtained from amazon-chime-sdk-recording-demo GitHub repository) which creates CloudFormation Stack and sets up the recording service
+        - start the Chime meeting and participants can join: meeting URL created from a second deploy.js script (obtained from amazon-chime-sdk-js GitHub repository), which creates CloudFormation Stack, Lambda function, API Gateway resources
+        - start & stop the recording: invoke REST API in API Gateway by utilizing Postman, set up proper AWS account authentication and start/stop meeting recording by sending two separate POST requests.
+        - finally, the successful meeting recording is uploaded to a pre-designated S3 bucket, which connects us to the rest of the analysis steps of the workflow.
 
 #Instructions
+
+
 
 1. Deploy the "Gender Classifier" model from AWS Marketplace
 
