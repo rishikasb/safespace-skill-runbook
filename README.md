@@ -1,6 +1,6 @@
 # SafeSpace Alexa Skill
 
-This summer internship project's goal is to enhance an existing Alexa skill (Mansplaining Skill), and to extend functionalities, which involved integrating other services. The SafeSpace skill is an innovative solution that leverages Alexa and SageMaker (Marketplace ML models) to highlight the importance of gender equality in conversations and discussions, particularly for professional meetings with women and men. It analyzes meeting recording (audio-only analysis) by providing the distribution of speaking time between men and women. This gives insight into the nature of the meeting discussion, and speaks to the inclusivity of women in the STEM field. 
+This summer internship project's goal is to enhance an existing Alexa skill (Mansplaining Skill). and extend functionalities, involving leveraging additional AWS services and integration with the Chime SDK. The SafeSpace skill is an innovative solution that leverages Alexa and SageMaker (Marketplace ML models) to highlight the importance of gender equality in conversations and discussions, particularly for professional meetings with women and men. It analyzes meeting recordings (audio-only analysis) by providing the distribution of speaking time between men and women. This gives insight into the nature of the meeting discussion, and speaks to the inclusivity of women in the STEM field. 
 
 ![Architecture Diagram](https://github.com/rishikasb/safespace-skill-runbook/blob/master/SafeSpace%20Skill%20-%20Architecture%20Diagram%20(1).png)
 
