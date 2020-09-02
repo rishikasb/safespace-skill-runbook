@@ -156,8 +156,12 @@ This summer internship project's goal is to enhance an existing Alexa skill (Man
         * 9.1.1 Navigate to Cloud9 in AWS Console
         * 9.1.2 Select "Create environment"
         * 9.1.3 Name: enter unique environment name, select "Next step"
-        * 9.1.4 Environment settings: use default options, select "Next step"
-        * 9.1.5 Review Environment name and settings, select "Create environment".
+        * 9.1.4 Environment settings: 
+            * 9.1.4.1 Environment type : Default option ("Create a new EC2 instance for environment (direct access)")
+            * 9.1.4.2 Instance type : Select Other instance type and select t3.medium from the dropdown
+            * 9.1.4.3 Platform : Amazon Linux
+            * 9.1.4.4 Select "Next step"
+        * 9.1.5 Review Environment name and settings, select "Create environment". Your Cloud9 environment is now being created, which may take a few minutes.
    
    * 9.2 Create ECR repository, build and push Docker image
         * 9.2.1 Enter the bash shell of the Cloud9 instance, run the following command to create a repository in ECR: 
@@ -168,6 +172,7 @@ This summer internship project's goal is to enhance an existing Alexa skill (Man
             * ```cd amazon-chime-sdk-recording-demo```
         * 9.2.3 Execute the following command, with the value of the repositoryUri generated from 7.2.1, to build and upload the Docker image into ECR.
             * ```make ECR_REPO_URI=<repositoryUri>```
+            * This command may take a few minutes to complete running. The output should contain
         * 9.2.4 Navigate to ECR in the AWS Console and verify the image exists
             * 9.2.4.1 Select the ECR repository that has been created, and verify the ImageURI for this repository. 
     
