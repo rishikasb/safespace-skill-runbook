@@ -2,7 +2,7 @@
 
 #End-to-End Workflow: General Overview & Serviced Used
 
-- Deploy Chime meeting recording application:
+- **Deploy Chime meeting recording application**:
     - Services used: Cloud9, ECR & ECR (Docker image), networking resources (VPC, security groups, subnets), auto-scaling group for ECS cluster, IAM roles
     - General overview: 
         - Create repository in ECR, build and upload docker image into ECR
@@ -11,19 +11,19 @@
         - Start & stop the recording: invoke REST API in API Gateway by utilizing Postman, set up proper AWS account authentication and start/stop meeting recording by sending two separate POST requests.
         - Finally, the successful meeting recording is uploaded to a pre-designated S3 bucket, which connects us to the rest of the analysis steps of the workflow.
         
-- Meeting recording file in S3: copy file to appropriate bucket
+- **Meeting recording file in S3: copy file to appropriate bucket**
     - Service used: Lambda function
     - General overview: Copy recording file to the appropriate S3 bucket, which has already been designated to serve as the trigger for the rest of the analysis workflow. This achieved by a single Lambda function and utilizes a trigger. 
     
-- Transcribe, transcode, and analyze the recording:
+- **Transcribe, transcode, and analyze the recording**:
     - Services used: Lambda, Transcribe, Elastic Transcoder, Sagemaker (Marketplace model)
     - General overview: TranscribeLambda function utilizes the Transcribe service to convert speech to text. The output of this function is a .json file, uploaded to a separate sub-directory of the S3 bucket. Once this file is uploaded, the next function is triggered -- the AnalyzeMeetingLambda function. This comprises of two steps: transcoding and the audio gender classifier model. Elastic Transcoder is used to convert the encoding format of the recording file to base64, as this is the required input to the machine learning model. Then, we run the Audio Gender Classifier model in Sagemaker through a batch transform process. The final output is %men vs. %women speaking for the duration of the meeting, indicating the analysis is complete.
 
-- Load and store the completed analysis:
+- **Load and store the completed analysis**:
     - Service used: DynamoDB
     - General overview: The new analysis item is loaded into the DynamoDB table. Each new table entry contains the following information: the "fact number", which is how we have specified each value in the Alexa skill, the analysis itself (%men vs. %women speaking), the meeting-id (which is the entire filepath from S3), and the meeting-category (which is a sub-directory in the S3 bucket and can be pre-defined by the user). 
 
-- Alexa Skill: query for analysis of latest meeting
+- **Alexa Skill: query for analysis of latest meeting**
     - Service used: Alexa Skills Kit, Alexa Developer Console
     - General overview: The skill is invoked in the developer console, but can also be invoked in any Echo device. The skill is invoked by the user saying "open SafeSpace skill", at which point we have entered the skill. Next, the user says a simple command, "analyze my meeting", which returns a two-part speech output: the number of meetings that have already been analyzed, along with the new analysis item, which is specified by its meeting category and the gender classification output itself. 
     
