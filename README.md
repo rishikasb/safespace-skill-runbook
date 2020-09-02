@@ -185,12 +185,14 @@ This summer internship project's goal is to enhance an existing Alexa skill (Man
             * ```git clone https://github.com/aws/amazon-chime-sdk-js```
             * ```cd demos```
             * ```cd serverless```
+            * ```npm install```
         * 8.5.2 Deploy this demo by executing the following command: creates CloudFormation stack, Lambda, and API Gateway resources
             * ```node ./deploy.js -r us-east-1 -b <my-bucket> -s <my-stack-name> -a meeting```
             * Note: The bucket name must follow the S3 bucket naming conventions. 
-            * The output will contain the meeting URL.
+            * The output will contain the meeting URL, and will look similar to: https://abcdefghij.execute-api.us-east-1.amazonaws.com/Prod/v2
+            * Make sure to use the URL ending in "/v2" when joining the meeting in the browser. 
     
-    * 8.6 Open the demo meeting using the meeting URL, in your browser.
+    * 8.6 Open the demo meeting using the meeting URL (from step 8.5.2), in your browser.
         * 8.6.1 Specify the meeting name as a unique name you would like.
         * 8.6.2 Specify the user name as a unique name you would like.
         * 8.6.3 Specify the region as the same region you have been creating and deploying all of the previous project resources. 
@@ -208,11 +210,12 @@ This summer internship project's goal is to enhance an existing Alexa skill (Man
     * 9.3 Start recording:
         * 9.3.1 Name the request, select "POST" for the new request.
         * 9.3.2 Pass the recordingAction as “start” as the first query parameter
-        * 9.3.3 Pass the meetingURL to the recording service as the second query parameter
-            * 9.3.3.1 Note: the URL must be URL encoded.
-        * 9.3.4 Start the meeting recording by pressing "SEND". The output should be an arn:aws:ecs:... value.
-        * 9.4.5 A new participant should join the meeting (<MeetingRecorder>) -- this is a recording bot that has joined the meeting and will capture the entire web page, both video and audio. 
-            * 9.4.5.1 Note: It can take upto 30 seconds for the meeting bot to join the meeting for the first time, and will take under 5 seconds to join after every subsequent recording.
+        * 9.3.3 Pass the meetingURL (from step 8.5.2) to the recording service as the second query parameter
+            * 9.3.3.1 Note: the URL must be URL encoded and must be the same URL (joined from the browser) that ends in "/v2". 
+        * 9.3.4 In the "POST" request, you should now "recording?recordingAction=start&meetingURL=...". Prepend the request with the recording service URL from step 8.3.1. 
+        * 9.3.5 Start the meeting recording by pressing "SEND". The output should be an arn:aws:ecs:... value.
+        * 9.4.6 A new participant should join the meeting (<MeetingRecorder>) -- this is a recording bot that has joined the meeting and will capture the entire web page, both video and audio. 
+            * 9.4.6.1 Note: It can take upto 30 seconds for the meeting bot to join the meeting for the first time, and will take under 5 seconds to join after every subsequent recording.
         
     * 9.4 Stop recording:
         * 9.4.1 Pass the ARN that was received in the API response from the previous "POST" request (to start the recording) as "taskId" for the first query parameter
