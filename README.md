@@ -40,7 +40,6 @@
     1.4 Click "Accept Offer”, and you will see a message: “Thank you for subscribing.  You can now use your product”. 
 
     1.5 Click “Continue to configuration”: You will now be at a page "Configure and launch".
-
         1.5.1 For "select your launch method", select "SageMaker console".
         1.5.2 For "configure your Amazon SageMaker console): choose Software version : 1 and Region : us-west-2.
         1.5.3 Select "Create a real-time inference endpoint", then click "View in Amazon Sagemaker". 
@@ -48,36 +47,25 @@
     1.6 You will now arrive in SageMaker in the AWS console and should be inside the appropriate model subscription for the Audio Gender Classifier Marketplace model.
 
     1.7 For "Model Settings" :
-    
         1.7.1 Model Name : Mansplaining-Gender-Classifier
-    
         1.7.2 IAM Role. : Create a new role: "S3 buckets you specify - Any S3 bucket", then click "Create role". 
-
         1.7.3 Container definition 1: Select "Use a model package subscription from AWS Marketplace"
-        
         1.7.4 Click "Next". 
 
-1.8 You will now arrive at the screen "Create endpoint". 
-
-    1.8.1 Name : Mansplaining-Gender-Classifier-Endpoint
-    1.8.2 Select “Create a new endpoint configuration”
-    1.8.3 For "New endpoint configuration": select default Endpoint configuration name, No Custom Encryption, and click "Create endpoint configuration". 
-
+    1.8 You will now arrive at the screen "Create endpoint". 
+        1.8.1 Name : Mansplaining-Gender-Classifier-Endpoint
+        1.8.2 Select “Create a new endpoint configuration”
+        1.8.3 For "New endpoint configuration": select default Endpoint configuration name, No Custom Encryption, and click "Create endpoint configuration". 
 
 2. Launch a Cloudformation Stack using the file "MansplainingResources.yml"
     
     2.1 Access CloudFormation through the AWS Console
-        
         2.1.1 Select "create stack" and choose the "with new resources" option
-
         2.1.2 Default option for "Prerequisite - prepare template" should be "template is ready" - do not change this. Select "upload a template file" under the "Specify template" option and now upload the "MansplainingResources.yml" here.
-
         2.1.3 Click "Next", no other options need to be changed, except use your own initials for the uniqueID (note: this must be at least 3 characters long).
-
         2.1.4 Verify the resources created, specifically in the S3 bucket.
 
     2.2 In the S3 bucket, create a folder "lambda-code" and upload three zip files from this repo.
-
         2.3.1 lambda-code/AnalyzeMeetingLambda.zip, lambda-code/TranscribeLambda.zip, and lambda-code/AlexaSkillLambda.zip
 
 3. Launch a CloudFormation Stack using the file "Mansplaining_LambdaFunctions.yml". Follow the same steps as above in 2.1.1-2.1.4. 
@@ -87,11 +75,13 @@
 4. Create CopyRecording Lambda function and configure its trigger.
     
     4.1 Navigate to the AWS Console and select Lambda, and click "Create function". 
+    
     4.2 Select "Author from scratch", and for basic information:
         4.2.1 Function name : CopyRecording
         4.2.2 Runtime : Node.js 12.x
         4.2.3 In the function code, under Actions, select "upload .zip file". 
         4.2.4 Upload the file in this repository, entitled "copyrecording.zip" (here: https://github.com/sirimuppala/mansplaining-skill/blob/master/lambda-code/copyrecording.zip)
+        
     4.3 Add trigger
         4.3.1 Choose S3
         4.3.2 Bucket : Select the chime-meeting-sdk-<aws-account-id>-<region>-recording-artifacts bucket.
@@ -100,12 +90,13 @@
         4.3.5 Suffix : Leave empty
         4.3.5 Click "Add"
 
-5.Configure TranscribeLambda trigger through console (Note : this portion can also be automated based on instructions at https://aws.amazon.com/premiumsupport/knowledge-center/cloudformation-s3-notification-lambda/ )
+5.Configure TranscribeLambda trigger through console (Note: this portion can also be automated based on instructions at https://aws.amazon.com/premiumsupport/knowledge-center/cloudformation-s3-notification-lambda/)
 
     5.1 Click on the Lambda function name
+    
     5.2 Add trigger (note: You can't create triggers for the $LATEST version, you must create them for a numbered version, as explained here: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/lambda-edge-add-triggers-lam-console.html)
+    
     5.3 Select a trigger:
-        
         5.3.1 Choose S3
         5.3.2 Bucket : Select the mansplaining bucket.
         5.3.3 Event type : PUT
@@ -120,7 +111,6 @@
     6.2 Add trigger (note: You can't create triggers for the $LATEST version, you must create them for a numbered version, as explained here: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/lambda-edge-add-triggers-lam-console.html)
     
     6.3 Select a trigger.  Choose S3
-        
         6.3.1 Bucket : Select the mansplaining bucket.
         6.3.2 Event type : COPY
         6.3.3 Prefix : meeting-transcriptions/
@@ -132,7 +122,6 @@
     7.1 Click on the Lambda function name
     
     7.2 Configure the Alexa Skill.
-        
         7.2.1 Navigate to https://developer.amazon.com/alexa/console/askClick and click ‘Create Skill”
         7.2.2 Skill name : Mansplaining
         7.2.3 Default language : English (US)
@@ -149,10 +138,9 @@
         7.2.8 Click “Save Model”
         7.2.9 Click “Build Model”
     
-    6.3 Add trigger (note: You can't create triggers for the $LATEST version, you must create them for a numbered version, as explained here: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/lambda-edge-add-triggers-lam-console.html)
-        
-        6.3.1 Select a trigger.  Choose AlexaSkill
-        6.3.2 Enter the Alexa Skill id collected from the Alexa Developer Console.
+    7.3 Add trigger (note: You can't create triggers for the $LATEST version, you must create them for a numbered version, as explained here: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/lambda-edge-add-triggers-lam-console.html)
+        7.3.1 Select a trigger.  Choose AlexaSkill
+        7.3.2 Enter the Alexa Skill id collected from the Alexa Developer Console.
 
 8. Set up the proper resources in the mansplaining S3 bucket.
 
@@ -163,7 +151,6 @@
 9. Deploy the Chime meeting recording application (more information here: https://aws.amazon.com/blogs/business-productivity/how-to-enable-client-side-recording-using-the-amazon-chime-sdk/)
 
     9.1 Create Cloud9 environment
-    
         9.1.1 Navigate to Cloud9 in AWS Console
         9.1.2 Select "Create environment"
         9.1.3 Name: enter unique environment name, select "Next step"
@@ -171,7 +158,6 @@
         9.1.5 Review Environment name and settings, select "Create environment".
    
    9.2 Create ECR repository, build and push Docker image
-         
          9.2.1 Enter the bash shell of the Cloud9 instance, run the following command to create a repository in ECR: 
             - aws ecr create-repository --repository-name repository-name
             - This will return a JSON response containing the repositoryArn valuem and other details of the newly-created repository.
@@ -182,15 +168,14 @@
             - make ECR_REPO_URI=<repositoryUri>
          9.2.4 Navigate to ECR in the AWS Console and verify the image exists
             9.2.4.1 Select the ECR repository that has been created, and verify the ImageURI for this repository. 
+    
     9.3 Set up the recording service
-        
         9.3.1 Execute the following command to deploy the CloudFormation stack shipped with the demo, in order to set up the recording service and the other necessary resources. 
             - node ./deploy.js -b <my-bucket> -s <my-stack> -i <my-docker-image> -r <region>
             - Note: The bucket name must follow the S3 bucket naming conventions. 
             - Expect this step to take several minutes to complete. The output will contain the Recording Service URL (save for later).
     
     9.4 Start a Chime SDK meeting, with the Chime SDK meeting demo, and multiple participants can join
-    
         9.4.1 Download the Chime SDK Meeting demo (repository link: https://github.com/aws/amazon-chime-sdk-js) by executing the following commands:
             - cd ../
             - git clone https://github.com/aws/amazon-chime-sdk-js
@@ -200,8 +185,8 @@
             - node ./deploy.js -r us-east-1 -b <my-bucket> -s <my-stack-name> -a meeting
             - Note: The bucket name must follow the S3 bucket naming conventions. 
             - The output will contain the meeting URL.
+    
     9.5 Open the demo meeting using the meeting URL, in your browser.
-        
         9.5.1 Specify the meeting name as a unique name you would like.
         9.5.2 Specify the user name as a unique name you would like.
         9.5.3 Specify the region as "US/N.Virginia" (us-east-1).
@@ -213,9 +198,10 @@
 10. Start and stop the meeting recording, by invoking a REST API in API Gateway, using the Postman application (https://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-use-postman-to-call-api.html)
 
     10.1 Follow the steps highlighted in Postman's developer guide (https://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-use-postman-to-call-api.html) to install and properly set up Postman. 
+    
     10.2 In Postman, select “AWS Signature" add your AccessKey, SecretKey & AWS Region in the Authorization tab (obtained from IAM in AWS Console).
+    
     10.3 Start recording:
-        
         10.3.1 Name the request, select "POST" for the new request.
         10.3.2 Pass the recordingAction as “start” as the first query parameter
         10.3.3 Pass the meetingURL to the recording service as the second query parameter
@@ -225,7 +211,6 @@
             10.4.5.1 Note: It can take upto 30 seconds for the meeting bot to join the meeting for the first time, and will take under 5 seconds to join after every subsequent recording.
         
     10.4 Stop recording:
-    
         10.4.1 Pass the ARN that was received in the API response from the previous "POST" request (to start the recording) as "taskId" for the first query parameter
         10.5.2 Pass the the recordingAction as “stop” as the second query parameter.
         10.5.3 Once the recording stops, the file is uploaded to an S3 bucket.
@@ -243,8 +228,7 @@
     
     11.4 Once analysis is complete, SNS is triggered, at which point the user receives an email, confirming the analysis is complete and with the latest meeting analysis included as well. 
     
-    11.5 The user can now re-enter the Alexa Developer Console and say the following commands in the "Test" menu:
-    
+    11.5 The user can now re-enter the Alexa Developer Console and say the following commands in the "Test" menu.
         11.5.1 "open SafeSpace skill"
         11.5.2 "analyze my meeting"
         11.5.3 The above command will output the number of meetings already analyzed, along with the same analysis item in the email sent from SNS.
