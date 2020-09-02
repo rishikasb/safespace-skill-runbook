@@ -149,7 +149,8 @@
     * 8.2 Add a sub-folder form the "meeting-recordings" folder, entitled "chime-recordings". 
     
 
-9. Deploy the Chime meeting recording application (more information here: https://aws.amazon.com/blogs/business-productivity/how-to-enable-client-side-recording-using-the-amazon-chime-sdk/)
+9. Deploy the Chime meeting recording application
+    * Note: The steps outlined below follow the blog post (https://aws.amazon.com/blogs/business-productivity/how-to-enable-client-side-recording-using-the-amazon-chime-sdk/), verify the proper execution with the screenshots included in the post.
 
     * 9.1 Create Cloud9 environment
         * 9.1.1 Navigate to Cloud9 in AWS Console
