@@ -241,4 +241,11 @@ This summer internship project's goal is to enhance an existing Alexa skill (Man
         * 10.5.3 Retrieve the meeting analysis by saying or typing: "analyze my meeting"
         * 10.5.4 The above command will output the number of meetings already analyzed, along with the same analysis item in the email sent from SNS.
 
-
+## Important References & Resources:
+   * [Marketplace ML Model (Audio Gender Classifier)](https://aws.amazon.com/marketplace/pp/prodview-pifmybvuy2cae?qid=1598821336576&sr=0-1&ref_=srh_res_product_title)
+   * Chime SDK Integration
+        * [Blog Post](https://aws.amazon.com/blogs/business-productivity/how-to-enable-client-side-recording-using-the-amazon-chime-sdk/)
+        * GitHub Repositories:
+            * [recording-demo](https://github.com/aws-samples/amazon-chime-sdk-recording-demo)
+            * [meeting-demo](https://github.com/aws/amazon-chime-sdk-js/tree/master/demos/serverless)
+        * [GitHub Reported Issues](https://github.com/aws-samples/amazon-chime-sdk-recording-demo/issues?q=is%3Aissue)
