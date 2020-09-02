@@ -191,9 +191,9 @@ This summer internship project's goal is to enhance an existing Alexa skill (Man
     * 9.5 Open the demo meeting using the meeting URL, in your browser.
         * 9.5.1 Specify the meeting name as a unique name you would like.
         * 9.5.2 Specify the user name as a unique name you would like.
-        * 9.5.3 Specify the region as "US/N.Virginia" (us-east-1).
-        * 9.5.4 No need to specify any of the optional settings and click “Continue”.
-        * 9.5.5 Select the appropriate audio and input devices, which you will need to allow access to, and then click "Join".
+        * 9.5.3 Specify the region as the same region you have been creating and deploying all of the previous project resources. 
+        * 9.5.4 No need to specify any of the optional settings, and click “Continue”.
+        * 9.5.5 Select the appropriate audio and input devices, which you will need to first allow access to, and then click "Join".
         * 9.5.6 You will now be in the meeting. The audio/video controls and screen-share settings are at the top in the middle of the window. Scroll to the bottom, where you will see the list of participants (who is muted/speaking), along with the live video feed for anyone meeting participant who has turned this on. 
         * 9.5.7 You can mimic multiple participants for the single meeting by opening the same meeting URL in multiple tabs in your browser, and make sure to select the same meeting name and region, but a different user name. 
 
@@ -230,9 +230,10 @@ This summer internship project's goal is to enhance an existing Alexa skill (Man
     
     * 11.4 Once analysis is complete, SNS is triggered, at which point the user receives an email, confirming the analysis is complete and with the latest meeting analysis included as well. 
     
-    * 11.5 The user can now re-enter the Alexa Developer Console and say the following commands in the "Test" menu.
-        * 11.5.1 "open SafeSpace skill"
-        * 11.5.2 "analyze my meeting"
-        * 11.5.3 The above command will output the number of meetings already analyzed, along with the same analysis item in the email sent from SNS.
+    * 11.5 The user can now re-enter the Alexa Developer Console and invoke the skill and retrieve the latest meeting analysis.
+        * 11.5.1 Navigate to the "Test" pane on the menu bar. 
+        * 11.5.2 Invoke the skill by saying or typing: "open SafeSpace skill"
+        * 11.5.3 Retrieve the meeting analysis by saying or typing: "analyze my meeting"
+        * 11.5.4 The above command will output the number of meetings already analyzed, along with the same analysis item in the email sent from SNS.
 
 
