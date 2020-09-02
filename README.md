@@ -1,6 +1,6 @@
 # SafeSpace Alexa Skill
 
-## End-to-End Workflow: General Overview & Serviced Used
+## End-to-End Workflow: General Overview & Services Used
 
 - **Deploy Chime meeting recording application**:
     - Services used: Cloud9, ECR & ECR (Docker image), networking resources (VPC, security groups, subnets), auto-scaling group for ECS cluster, IAM roles
