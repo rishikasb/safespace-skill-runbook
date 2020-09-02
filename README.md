@@ -258,6 +258,8 @@ This summer internship project's goal is to enhance an existing Alexa skill (Man
    * Alexa Developer Console:
         * If any changes are made, in the JSON editor, invocations, etc., the model must be saved and built before the changes can actually take place.
         * In the endpoint menu, for the endpoint service type, under AWS Lambda ARN: verify the default regions (and the other three regions) all match the ARN value of the AlexaSkillLambda function. 
+   * Elastic Transcoder:
+        * Verify that no more than 4 pipelines are running at the same time. If this limit is reached, then no more transcoding jobs can take place and this will make the TranscribeLambda function fail. 
    
 
 ## Important References & Resources:
