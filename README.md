@@ -241,6 +241,25 @@ This summer internship project's goal is to enhance an existing Alexa skill (Man
         * 10.5.3 Retrieve the meeting analysis by saying or typing: "analyze my meeting"
         * 10.5.4 The above command will output the number of meetings already analyzed, along with the same analysis item in the email sent from SNS.
 
+## Troubleshooting Tips:
+   * Lambda: 
+        * Any code changes can only be made in the $LATEST version. 
+        * To properly add triggers, a new version must be published (triggers can only be configured for numbered versions).
+   * S3:
+        * The file structure of the chime-meeting-sdk-<aws-account-id>-<region>-recording-artifacts bucket is organized by year, month, then day. 
+        * After 5:00pm PDT, any new recordings are added to the sub-directory for the next day. 
+   * Cloud9:
+        * The EBS volume the EC2 instance is running on may run out of disk space at times. In order to resolve this, we can add more space to the volume. Follow the steps outlined here: https://docs.aws.amazon.com/cloud9/latest/user-guide/move-environment.html
+        * The two S3 buckets and two CloudFormation stacks created, created through running the two separate deploy.js scripts, must following naming conventions. If a stack or bucket already exists with a name, another one with the same name cannot be created. 
+        * Make sure ```npm install``` is run prior to running the second deploy.js script. 
+   * Postman:
+        * Make sure to use the meeting URL ending in "/v2".
+        * The meetingURL value must be the encoded version of the meeting URL.
+   * Alexa Developer Console:
+        * If any changes are made, in the JSON editor, invocations, etc., the model must be saved and built before the changes can actually take place.
+        * In the endpoint menu, for the endpoint service type, under AWS Lambda ARN: verify the default regions (and the other three regions) all match the ARN value of the AlexaSkillLambda function. 
+   
+
 ## Important References & Resources:
    * [Marketplace ML Model (Audio Gender Classifier)](https://aws.amazon.com/marketplace/pp/prodview-pifmybvuy2cae?qid=1598821336576&sr=0-1&ref_=srh_res_product_title)
    * Chime SDK Integration
