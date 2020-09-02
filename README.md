@@ -161,7 +161,7 @@
    * 9.2 Create ECR repository, build and push Docker image
          * 9.2.1 Enter the bash shell of the Cloud9 instance, run the following command to create a repository in ECR: 
             > aws ecr create-repository --repository-name repository-name
-            > This will return a JSON response containing the repositoryArn value and other details of the newly-created repository.
+            * This will return a JSON response containing the repositoryArn value and other details of the newly-created repository.
          * 9.2.2 Execute the following two commands to clone the recording demo in the Cloud9 instance (repository link: https://github.com/aws-samples/amazon-chime-sdk-recording-demo)
             > git clone https://github.com/aws-samples/amazon-chime-sdk-recording-demo.git
             > cd amazon-chime-sdk-recording-demo
@@ -173,8 +173,8 @@
     * 9.3 Set up the recording service
         * 9.3.1 Execute the following command to deploy the CloudFormation stack shipped with the demo, in order to set up the recording service and the other necessary resources. 
             > node ./deploy.js -b <my-bucket> -s <my-stack> -i <my-docker-image> -r <region>
-            > Note: The bucket name must follow the S3 bucket naming conventions. 
-            > Expect this step to take several minutes to complete. The output will contain the Recording Service URL (save for later).
+            * Note: The bucket name must follow the S3 bucket naming conventions. 
+            * Expect this step to take several minutes to complete. The output will contain the Recording Service URL (save for later).
     
     * 9.4 Start a Chime SDK meeting, with the Chime SDK meeting demo, and multiple participants can join
         * 9.4.1 Download the Chime SDK Meeting demo (repository link: https://github.com/aws/amazon-chime-sdk-js) by executing the following commands:
@@ -184,8 +184,8 @@
             > cd serverless
         * 9.4.2 Deploy this demo by executing the following command: creates CloudFormation stack, Lambda, and API Gateway resources
             > node ./deploy.js -r us-east-1 -b <my-bucket> -s <my-stack-name> -a meeting
-            > Note: The bucket name must follow the S3 bucket naming conventions. 
-            > The output will contain the meeting URL.
+            * Note: The bucket name must follow the S3 bucket naming conventions. 
+            * The output will contain the meeting URL.
     
     * 9.5 Open the demo meeting using the meeting URL, in your browser.
         * 9.5.1 Specify the meeting name as a unique name you would like.
