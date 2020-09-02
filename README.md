@@ -1,6 +1,6 @@
 # SafeSpace Alexa Skill
 
-#End-to-End Workflow: General Overview & Serviced Used
+## End-to-End Workflow: General Overview & Serviced Used
 
 - **Deploy Chime meeting recording application**:
     - Services used: Cloud9, ECR & ECR (Docker image), networking resources (VPC, security groups, subnets), auto-scaling group for ECS cluster, IAM roles
@@ -27,7 +27,7 @@
     - Service used: Alexa Skills Kit, Alexa Developer Console
     - General overview: The skill is invoked in the developer console, but can also be invoked in any Echo device. The skill is invoked by the user saying "open SafeSpace skill", at which point we have entered the skill. Next, the user says a simple command, "analyze my meeting", which returns a two-part speech output: the number of meetings that have already been analyzed, along with the new analysis item, which is specified by its meeting category and the gender classification output itself. 
     
-#Instructions
+## Instructions
 
 1. Deploy the "Gender Classifier" model from AWS Marketplace
 
