@@ -2,7 +2,6 @@ from __future__ import print_function
 import boto3
 import os
 from boto3.dynamodb.conditions import Key, Attr
-import random
 from random import randint
 
 
@@ -43,7 +42,7 @@ def get_welcome_response():
     session_attributes = {}
     card_title = "Welcome"
     # speech_output = os.environ["GREETING_MSG"]
-    speech_output = "Welcome to mansplaining facts skill"
+    speech_output = "Welcome to the Safe Space skill"
     reprompt_text = "To hear available stats, ask what stats are available"
     should_end_session = False
     return build_response(session_attributes, build_speechlet_response(
@@ -85,10 +84,18 @@ def get_mansplaining_fact(table, intent, session):
 
         count = 0
         count = len(items);
+        count_ = str(count)
+        count_speech = count_ + ". "
         print("Number of mansplaining facts ", count)
-
+        
         # Select a random fact
-        random_fact_number = randint(1, count)
+        #random_fact_number = randint(1, count)
+        
+        ##TODO Get either the latest or a random fact.  
+        ##For now can we change to always get latest? 
+        ##Uncomment the line below to always get the latest one.
+        random_fact_number = count
+        
         response = table.get_item(
             Key={'fact-type': 'MansplainingFact', 'fact-number': str(random_fact_number)}
         )
@@ -103,7 +110,8 @@ def get_mansplaining_fact(table, intent, session):
     fact = response['Item']['analysis']
     category = response['Item']['meeting-category']
     if fact:
-        speech_output = "Analysis of a meeting in the " + category + " category reveals that " + fact
+        # speech_output = "Analysis of a meeting in the " + category + " category reveals that " + fact
+        speech_output = "Currently, the number of meetings analyzed is" + count_speech + "Analysis of a meeting in the " + category + " category reveals that " + fact + " "
         should_end_session = False
 
     return build_response(session_attributes, build_speechlet_response(

@@ -9,6 +9,7 @@ s3_resource = boto3.resource('s3')
 elastictranscoder_client = boto3.client('elastictranscoder')
 s3_client = boto3.client('s3')
 sagemaker_client = boto3.client('sagemaker-runtime')
+sns = boto3.client('sns')
 
 dynamodb_client = boto3.client('dynamodb')
 dynamodb_resource = boto3.resource('dynamodb')
@@ -120,6 +121,7 @@ def lambda_handler(event, context):
        print("******* job_id ", job, " status is ", job_status)
        if job_status in ["Complete", "Failed"]:
          break;
+       time.sleep(3) #Sleep for 3 seconds
 
     #Now convert WAV to byte64 encoded and make predictions
     male_count = 0
@@ -183,7 +185,7 @@ def lambda_handler(event, context):
     count = 0
 
     count = len(items)
-    print("Number of mansplaining facts ", count)
+    print("Number of mansplaining facts updated to ", count)
 
     ##TODO : Remove hardcoding for fact-number.
     dynamodb_client.put_item(
@@ -196,5 +198,14 @@ def lambda_handler(event, context):
             'analysis': {'S': meeting_analysis}
         }
     )
-
+    
+    ##TODO : Send SNS Notifications to the Mansplaining Topic
+    # Publish a simple message to the specified SNS topic
+    
+    print("Sending SNS message")
+    response = sns.publish(
+        TopicArn='arn:aws:sns:us-east-1:778115975224:MansplainingTopic',    
+        Message="Meeting was analyzed. Analysis shows " + meeting_analysis    
+    )
+    print(response)
     return "Completed transcribing the meeting recording"
