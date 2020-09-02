@@ -244,7 +244,8 @@ This summer internship project's goal is to enhance an existing Alexa skill (Man
 ## Troubleshooting Tips:
    * Lambda: 
         * Any code changes can only be made in the $LATEST version. 
-        * To properly add triggers, a new version must be published (triggers can only be configured for numbered versions).
+        * To properly add triggers, a new version must be published -- triggers can only be configured for numbered versions.
+        * Only one trigger can exist at a time over all versions of a single function. If you would like to keep a trigger, you can choose to disable it, in place of deleting it altogether.
    * S3:
         * The file structure of the chime-meeting-sdk-<aws-account-id>-<region>-recording-artifacts bucket is organized by year, month, then day. 
         * After 5:00pm PDT, any new recordings are added to the sub-directory for the next day. 
@@ -259,7 +260,7 @@ This summer internship project's goal is to enhance an existing Alexa skill (Man
         * If any changes are made, in the JSON editor, invocations, etc., the model must be saved and built before the changes can actually take place.
         * In the endpoint menu, for the endpoint service type, under AWS Lambda ARN: verify the default regions (and the other three regions) all match the ARN value of the AlexaSkillLambda function. 
    * Elastic Transcoder:
-        * Verify that no more than 4 pipelines are running at the same time. If this limit is reached, then no more transcoding jobs can take place and this will make the TranscribeLambda function fail. 
+        * Verify that no more than 4 pipelines (in a single region) are running at the same time. If this limit is reached, then no more transcoding jobs can take place and this will make the TranscribeLambda function fail. (see documentation here: https://docs.aws.amazon.com/elastictranscoder/latest/developerguide/limits.html)
    
 
 ## Important References & Resources:
