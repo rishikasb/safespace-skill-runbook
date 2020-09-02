@@ -91,7 +91,7 @@
         4.2.1 Function name : CopyRecording
         4.2.2 Runtime : Node.js 12.x
         4.2.3 In the function code, under Actions, select "upload .zip file". 
-        4.2.4 Upload the file in this repository, entitled "copyrecording,js".
+        4.2.4 Upload the file in this repository, entitled "copyrecording.zip" (here: https://github.com/sirimuppala/mansplaining-skill/blob/master/lambda-code/copyrecording.zip)
     4.3 Add trigger
         4.3.1 Choose S3
         4.3.2 Bucket : Select the chime-meeting-sdk-<aws-account-id>-<region>-recording-artifacts bucket.
