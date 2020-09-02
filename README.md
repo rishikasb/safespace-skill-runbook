@@ -146,7 +146,7 @@ This summer internship project's goal is to enhance an existing Alexa skill (Man
 
     * 8.1 If not already created, create a folder "meeting-recordings" in the bucket.
     
-    * 8.2 Add a sub-folder from the "meeting-recordings" folder, entitled "chime-recordings". 
+    * 8.2 Verify that four sub-folders exist: "chime-recordings", "diversity-meetings", "political-discussions", and "technical-meetings". 
     
 
 9. Deploy the Chime meeting recording application
