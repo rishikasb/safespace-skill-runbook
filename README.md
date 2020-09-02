@@ -234,6 +234,7 @@
         10.5.4 This recording can now be played or edited, as is necessary.
 
 11. Final steps
+    
     11.1 This will automatically trigger "CopyRecording", which copies the recording to the appropriate mansplaining S3 bucket.
     11.2 This then triggers "TranscribeLambda" which transcribes the recording and stores in the folder "meeting-transcriptions". 
     11.3 Once the meeting transcription is created, "AnalyzeMeetingLambda" is triggered, which transcoder the file and the marketplace ML model is run. 
