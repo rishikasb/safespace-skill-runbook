@@ -7,6 +7,47 @@ Parameters:
     Description: Enter your initials in lower case as a unique identifier for components created 
     AllowedPattern: "^([a-z]|(d(?!d{0,2}.d{1,3}.d{1,3}.d{1,3})))([a-zd]|(.(?!(.|-)))|(-(?!.))){1,61}[a-zd.]$"
 Resources:
+  CopyRecordingLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      Runtime: node.js 12.x
+      Handler: index.handler
+      Role: !GetAtt [ChimeRecordingExecutionRole, Arn]
+      Timeout: 3
+      Code:
+        S3Bucket:
+          Fn::ImportValue: MansplainingBucket
+        S3Key: "lambda-code/copyrecording.zip"
+
+  ChimeRecordingExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+      RoleName:
+        Fn::Join:
+          - ""
+          - - "ChimeRecording"
+            - !Ref UniqueID
+
+  CopyRecordingLambdaInvokePermission:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: !GetAtt CopyRecordingLambda.Arn
+      Action: 'lambda:InvokeFunction'
+      Principal: s3.amazonaws.com
+      SourceAccount: !Ref 'AWS::AccountId'
+      SourceArn:
+        Fn::ImportValue: !Sub MansplainingBucketARN
+
   TranscribeLambda:
     Type: AWS::Lambda::Function
     Properties:
