@@ -201,7 +201,7 @@ This summer internship project's goal is to enhance an existing Alexa skill (Man
         * 8.6.6 You will now be in the meeting. The audio/video controls and screen-share settings are at the top in the middle of the window. Scroll to the bottom, where you will see the list of participants (who is muted/speaking), along with the live video feed for anyone meeting participant who has turned this on. 
         * 8.6.7 You can mimic multiple participants for the single meeting by opening the same meeting URL in multiple tabs in your browser, and make sure to select the same meeting name and region, but a different user name. 
 
-9. Start and stop the meeting recording, by invoking a REST API in API Gateway, using the Postman application (https://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-use-postman-to-call-api.html)
+9. Start and stop the meeting recording, by invoking a REST API in API Gateway, using the Postman application.
 
     * 9.1 Follow the steps highlighted in Postman's developer guide (https://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-use-postman-to-call-api.html) to install and properly set up Postman. 
     
@@ -249,3 +249,7 @@ This summer internship project's goal is to enhance an existing Alexa skill (Man
             * [recording-demo](https://github.com/aws-samples/amazon-chime-sdk-recording-demo)
             * [meeting-demo](https://github.com/aws/amazon-chime-sdk-js/tree/master/demos/serverless)
         * [GitHub Reported Issues](https://github.com/aws-samples/amazon-chime-sdk-recording-demo/issues?q=is%3Aissue)
+        * [Postman Developer Guide](https://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-use-postman-to-call-api.html)
+   * Configuring triggers in Lambda:
+        * [Trigger cannot be configured on $LATEST version](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/lambda-edge-add-triggers-lam-console.html)
+        * [Automate adding triggers](https://aws.amazon.com/premiumsupport/knowledge-center/cloudformation-s3-notification-lambda/)
