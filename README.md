@@ -236,9 +236,13 @@
 11. Final steps
     
     11.1 This will automatically trigger "CopyRecording", which copies the recording to the appropriate mansplaining S3 bucket.
+    
     11.2 This then triggers "TranscribeLambda" which transcribes the recording and stores in the folder "meeting-transcriptions". 
+    
     11.3 Once the meeting transcription is created, "AnalyzeMeetingLambda" is triggered, which transcoder the file and the marketplace ML model is run. 
+    
     11.4 Once analysis is complete, SNS is triggered, at which point the user receives an email, confirming the analysis is complete and with the latest meeting analysis included as well. 
+    
     11.5 The user can now re-enter the Alexa Developer Console and say the following commands in the "Test" menu:
     
         11.5.1 "open SafeSpace skill"
