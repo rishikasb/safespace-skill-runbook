@@ -69,24 +69,20 @@ This summer internship project's goal is to enhance an existing Alexa skill (Man
         * 2.1.3 Click "Next", no other options need to be changed, except use your own initials for the uniqueID (note: this must be at least 3 characters long).
         * 2.1.4 Verify the resources created, specifically in the S3 bucket.
 
-    * 2.2 In the S3 bucket, create a folder "lambda-code" and upload three zip files from this repo.
-        * 2.3.1 lambda-code/AnalyzeMeetingLambda.zip, lambda-code/TranscribeLambda.zip, and lambda-code/AlexaSkillLambda.zip
+    * 2.2 In the S3 bucket, create a folder "lambda-code" and upload four zip files from this repo.
+        * 2.3.1 lambda-code/AnalyzeMeetingLambda.zip, lambda-code/TranscribeLambda.zip, lambda-code/AlexaSkillLambda.zip, and lambda-code/copyrecording.zip.
 
 3. Launch a CloudFormation Stack using the file "Mansplaining_LambdaFunctions.yml". Follow the same steps as above in 2.1.1-2.1.4. 
 
-    * 3.1.Verify the two Lambda functions created.
+    * 3.1.Verify all four Lambda functions are created.
 
-4. Create CopyRecording Lambda function and configure its trigger.
+4. Configure CopyRecordingLambda trigger through console (Note: this portion can also be automated based on instructions at https://aws.amazon.com/premiumsupport/knowledge-center/cloudformation-s3-notification-lambda/)
     
-    * 4.1 Navigate to the AWS Console and select Lambda, and click "Create function". 
+    * 4.1 Click on the Lambda function name
     
-    * 4.2 Select "Author from scratch", and for basic information:
-        * 4.2.1 Function name : CopyRecording
-        * 4.2.2 Runtime : Node.js 12.x
-        * 4.2.3 In the function code, under Actions, select "upload .zip file". 
-        * 4.2.4 Upload the file in this repository, entitled "copyrecording.zip" (here: https://github.com/sirimuppala/mansplaining-skill/blob/master/lambda-code/copyrecording.zip)
-        
-    * 4.3 Add trigger
+    * 4.2 Add trigger (note: You can't create triggers for the $LATEST version, you must create them for a numbered version, as explained here: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/lambda-edge-add-triggers-lam-console.html)
+    
+    * 4.3 Select a trigger:
         * 4.3.1 Choose S3
         * 4.3.2 Bucket : Select the chime-meeting-sdk-<aws-account-id>-<region>-recording-artifacts bucket
         * 4.3.3 Event type : PUT
@@ -121,36 +117,36 @@ This summer internship project's goal is to enhance an existing Alexa skill (Man
         * 6.3.4 Suffix : Leave empty
         * 6.3.5 Click "Add"
 
-7. Configure AlexaSkillLambda and its trigger through the console (Note : this portion can also be automated based on instructions at https://aws.amazon.com/premiumsupport/knowledge-center/cloudformation-s3-notification-lambda/)
-
-    * 7.1 Click on the Lambda function name
+7. Create/configure SafeSpace Alexa Skill and configure AlexaSkillLambda and its trigger through the console (Note : this portion can also be automated based on instructions at https://aws.amazon.com/premiumsupport/knowledge-center/cloudformation-s3-notification-lambda/)
     
-    * 7.2 Configure the Alexa Skill.
-        * 7.2.1 Navigate to https://developer.amazon.com/alexa/console/askClick and click ‘Create Skill”
-        * 7.2.2 Skill name : Mansplaining
-        * 7.2.3 Default language : English (US)
-        * 7.2.4 Choose a model to add to your skill
-            * 7.2.4.1 Click “Custom”
-            * 7.2.4.2 Choose a method to host your skill’s backend resources, and click “Alexa-Hosted(Python)”
-            * 7.2.4.3 Click “Create Skill”
-        * 7.2.5 On the next page, choose a template to add to your skill:
-            * 7.2.5.1 Click “Hello World Skill”
-            * 7.2.5.2 Click “Continue with template”
-        * 7.2.6 On the next page, select "JSON Editor"
-            * 7.2.6.1 Drag and drop the mansplaining.json file located in this repository (here: https://github.com/sirimuppala/mansplaining-skill/blob/master/alexa-skill/mansplaining.json)
-        * 7.2.7 Navigate to "Code" menu, change invocation name to: "open safe space skill"
-        * 7.2.8 Click “Save Model”
-        * 7.2.9 Click “Build Model”
+    * 7.1 Configure the Alexa Skill.
+        * 7.1.1 Navigate to https://developer.amazon.com/alexa/console/askClick and click ‘Create Skill”
+        * 7.1.2 Skill name : SafeSpace
+        * 7.1.3 Default language : English (US)
+        * 7.1.4 Choose a model to add to your skill
+            * 7.1.4.1 Click “Custom”
+            * 7.1.4.2 Choose a method to host your skill’s backend resources, and click “Alexa-Hosted(Python)”
+            * 7.1.4.3 Click “Create Skill”
+        * 7.1.5 On the next page, choose a template to add to your skill:
+            * 7.1.5.1 Click “Hello World Skill”
+            * 7.1.5.2 Click “Continue with template”
+        * 7.1.6 On the next page, select "JSON Editor"
+            * 7.1.6.1 Drag and drop the mansplaining.json file located in this repository (here: https://github.com/sirimuppala/mansplaining-skill/blob/master/alexa-skill/mansplaining.json)
+        * 7.1.7 Navigate to "Code" menu, change invocation name to: "open safe space skill"
+        * 7.1.8 Click “Save Model”
+        * 7.1.9 Click “Build Model”
+    
+    * 7.2 Navigate to AWS Console, select Lambda and click on the Lambda function name.
     
     * 7.3 Add trigger (note: You can't create triggers for the $LATEST version, you must create them for a numbered version, as explained here: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/lambda-edge-add-triggers-lam-console.html)
         * 7.3.1 Select a trigger.  Choose AlexaSkill
-        * 7.3.2 Enter the Alexa Skill id collected from the Alexa Developer Console.
+        * 7.3.2 Enter the Alexa Skill ID collected from the Alexa Developer Console.
 
 8. Set up the proper resources in the mansplaining S3 bucket.
 
     * 8.1 If not already created, create a folder "meeting-recordings" in the bucket.
     
-    * 8.2 Add a sub-folder form the "meeting-recordings" folder, entitled "chime-recordings". 
+    * 8.2 Add a sub-folder from the "meeting-recordings" folder, entitled "chime-recordings". 
     
 
 9. Deploy the Chime meeting recording application
