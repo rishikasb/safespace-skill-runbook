@@ -1,0 +1,210 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Preparing AWS resources form mansplaining.
+Parameters: 
+  UniqueID: 
+    Type: String
+    Default: yourinitials
+    Description: Enter your initials in lower case as a unique identifier for components created 
+    AllowedPattern: "^([a-z]|(d(?!d{0,2}.d{1,3}.d{1,3}.d{1,3})))([a-zd]|(.(?!(.|-)))|(-(?!.))){1,61}[a-zd.]$"
+Resources:
+  CopyRecordingLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      Runtime: node.js 12.x
+      Handler: index.handler
+      Role: !GetAtt [ChimeRecordingExecutionRole, Arn]
+      Timeout: 3
+      Code:
+        S3Bucket:
+          Fn::ImportValue: MansplainingBucket
+        S3Key: "lambda-code/copyrecording.zip"
+
+  ChimeRecordingExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/ChimeRecording
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+      RoleName:
+        Fn::Join:
+          - ""
+          - - "ChimeRecording"
+            - !Ref UniqueID
+
+  CopyRecordingLambdaInvokePermission:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: !GetAtt CopyRecordingLambda.Arn
+      Action: 'lambda:InvokeFunction'
+      Principal: s3.amazonaws.com
+      SourceAccount: !Ref 'AWS::AccountId'
+      SourceArn:
+        Fn::ImportValue: !Sub MansplainingBucketARN
+
+  TranscribeLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      Runtime: python3.6
+      Handler: TranscribeLambda.lambda_handler
+      Role: !GetAtt [TranscribeLambdaExecutionRole, Arn]
+      Timeout: 900
+      Code:
+        S3Bucket:
+          Fn::ImportValue: MansplainingBucket
+        S3Key: "lambda-code/TranscribeLambda.zip"
+
+  TranscribeLambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonTranscribeFullAccess
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
+        - arn:aws:iam::aws:policy/CloudWatchFullAccess
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      RoleName:
+        Fn::Join:
+          - ""
+          - - "Mansplaining-Transcribe-Lambda-ServiceRole-"
+            - !Ref UniqueID
+
+  TranscribeLambdaInvokePermission:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: !GetAtt TranscribeLambda.Arn
+      Action: 'lambda:InvokeFunction'
+      Principal: s3.amazonaws.com
+      SourceAccount: !Ref 'AWS::AccountId'
+      SourceArn:
+        Fn::ImportValue: !Sub MansplainingBucketARN
+
+  AnalyzeMeetingLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      Runtime: python3.6
+      Handler: AnalyzeMeetingLambda.lambda_handler
+      Role: !GetAtt [AnalyzeMeetingLambdaExecutionRole, Arn]
+      Timeout: 900
+      Environment:
+        Variables:
+          ElasticTranscoderRole: !GetAtt [ElasticTranscoderExecutionRole, Arn]
+          MansplainingDynamoDB:
+            Fn::ImportValue: !Sub MansplainingDynamoDB
+          GenderClassifierEndpoint: "Mansplaining-Gender-Classifier-EP"
+      Code:
+        S3Bucket:
+            Fn::ImportValue: MansplainingBucket
+        S3Key: "lambda-code/AnalyzeMeetingLambda.zip"
+
+  AlexaSkillLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      Runtime: python3.6
+      Handler: AlexaSkillLambda.lambda_handler
+      Role: !GetAtt [AlexaSkilLambdaExecutionRole, Arn]
+      Timeout: 900
+      Environment:
+        Variables:
+          MansplainingDynamoDB:
+            Fn::ImportValue: !Sub MansplainingDynamoDB
+      Code:
+        S3Bucket:
+          Fn::ImportValue: MansplainingBucket
+        S3Key: "lambda-code/AlexaSkillLambda.zip"
+
+  AlexaSkilLambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/CloudWatchFullAccess
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+      RoleName:
+        Fn::Join:
+          - ""
+          - - "Mansplaining-MansplainingSkill-Lambda-ServiceRole-"
+            - !Ref UniqueID
+
+  AnalyzeMeetingLambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      ManagedPolicyArns:
+          - arn:aws:iam::aws:policy/AmazonElasticTranscoder_FullAccess
+          - arn:aws:iam::aws:policy/AmazonSageMakerFullAccess
+          - arn:aws:iam::aws:policy/AmazonS3FullAccess
+          - arn:aws:iam::aws:policy/CloudWatchFullAccess
+          - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+          - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+          - arn:aws:iam::aws:policy/IAMFullAccess
+      RoleName:
+        Fn::Join:
+          - ""
+          - - "Mansplaining-AnalyzeMeeting-Lambda-ServiceRole-"
+            - !Ref UniqueID
+
+  ElasticTranscoderExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          Effect: Allow
+          Principal:
+            Service:  elastictranscoder.amazonaws.com
+          Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonElasticTranscoder_FullAccess
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
+        - arn:aws:iam::aws:policy/CloudWatchFullAccess
+        - arn:aws:iam::aws:policy/IAMFullAccess
+      RoleName:
+        Fn::Join:
+          - ""
+          - - "Mansplaining-ElasticTranscoder-ServiceRole-"
+            - !Ref UniqueID
+
+  AnalyzeMeetingLambdaInvokePermission:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: !GetAtt AnalyzeMeetingLambda.Arn
+      Action: 'lambda:InvokeFunction'
+      Principal: s3.amazonaws.com
+      SourceAccount: !Ref 'AWS::AccountId'
+      SourceArn:
+        Fn::ImportValue: !Sub MansplainingBucketARN
+
+
+Outputs:
+  TranscribeLambda:
+    Description: Transcribe Lambda Function
+    Value: !Ref TranscribeLambda
+
+
